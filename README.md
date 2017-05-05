@@ -1,7 +1,10 @@
 promise-worker [![Build Status](https://travis-ci.org/nolanlawson/promise-worker.svg?branch=master)](https://travis-ci.org/nolanlawson/promise-worker) [![Coverage Status](https://coveralls.io/repos/github/nolanlawson/promise-worker/badge.svg?branch=master)](https://coveralls.io/github/nolanlawson/promise-worker?branch=master)
 ====
 
-A small and performant library for communicating with Web Workers or Service Workers, using Promises. Post a message to the worker, get a message back.
+
+Modified version of [promise-worker](https://github.com/nolanlawson/promise-worker) library to run on node.js. The original does work on node.js in general but is not designed to support it, and doesn't handle some error cases that could happen on node (which this library intends to handle).
+
+A small and performant library for communicating with Web Workers, using Promises. Post a message to the worker, get a message back.
 
 **Goals:**
 
@@ -12,7 +15,6 @@ A small and performant library for communicating with Web Workers or Service Wor
 **Live examples:**
 
 * [Web Workers](https://bl.ocks.org/nolanlawson/05e74a8408a099635c9a38f839b5ae9f)
-* [Service Workers](https://bl.ocks.org/nolanlawson/91a7f5809f2e17a2e6a753a3cb8d2eec)
 
 Usage
 ---
@@ -25,7 +27,7 @@ Inside your main bundle:
 
 ```js
 // main.js
-var PromiseWorker = require('promise-worker');
+var PromiseWorker = require('promise-worker-node');
 var worker = new Worker('worker.js');
 var promiseWorker = new PromiseWorker(worker);
 
@@ -40,7 +42,7 @@ Inside your `worker.js` bundle:
 
 ```js
 // worker.js
-var registerPromiseWorker = require('promise-worker/register');
+var registerPromiseWorker = require('promise-worker-node/register');
 
 registerPromiseWorker(function (message) {
   return 'pong';
@@ -158,67 +160,10 @@ registerPromiseWorker(function (message) {
 });
 ```
 
-### Service Workers
-
-Communicating with a Service Worker is the same as with a Web Worker.
-However, you have to wait for the Service Worker to install and start controlling the page. Here's an example:
-
-```js
-navigator.serviceWorker.register('sw.js', {
-  scope: './'
-}).then(function () {
-  if (navigator.serviceWorker.controller) {
-    // already active and controlling this page
-    return navigator.serviceWorker;
-  }
-  // wait for a new service worker to control this page
-  return new Promise(function (resolve) {
-    function onControllerChange() {
-      navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
-      resolve(navigator.serviceWorker);
-    }
-    navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
-  });
-}).then(function (worker) { // the worker is ready
-  var promiseWorker = new PromiseWorker(worker);
-  return promiseWorker.postMessage('hello worker!');
-}).catch(console.log.bind(console));
-```
-
-Then inside your Service Worker:
-
-```js
-var registerPromiseWorker = require('../register');
-
-registerPromiseWorker(function (msg) {
-  return 'hello main thread!';
-});
-
-self.addEventListener('activate', function(event) {
-  event.waitUntil(self.clients.claim()); // activate right now
-});
-```
-
 Browser support
 ----
 
-See [.zuul.yml](https://github.com/nolanlawson/promise-worker/blob/master/.zuul.yml) for the full list
-of tested browsers, but basically:
-
-* Chrome
-* Firefox
-* Safari 8+
-* IE 10+
-* Edge
-* iOS 8+
-* Android 4.4+
-
-If a browser [doesn't support Web Workers](http://caniuse.com/webworker) but you still want to use this library,
-then you can use [pseudo-worker](https://github.com/nolanlawson/pseudo-worker).
-
-For Service Worker support, Chrome 40 and 41 are known to be buggy (see [#9](https://github.com/nolanlawson/promise-worker/pull/9)), but 42+ are supported.
-
-This library is not designed to run in Node.js.
+This library is designed to run in Node.js, and is a fork of a library that does run in browsers. Technically this probably does run in browsers, but that's not the goal here. I'd recommend the original if you don't specifically need the extra node bits that this library adds.
 
 API
 ---
