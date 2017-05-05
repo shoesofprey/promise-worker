@@ -1,4 +1,4 @@
-promise-worker [![Build Status](https://travis-ci.org/nolanlawson/promise-worker.svg?branch=master)](https://travis-ci.org/nolanlawson/promise-worker) [![Coverage Status](https://coveralls.io/repos/github/nolanlawson/promise-worker/badge.svg?branch=master)](https://coveralls.io/github/nolanlawson/promise-worker?branch=master)
+promise-worker [![Build Status](https://travis-ci.org/shoesofprey/promise-worker-node.svg?branch=master)](https://travis-ci.org/shoesofprey/promise-worker) [![Coverage Status](https://coveralls.io/repos/github/shoesofprey/promise-worker-node/badge.svg?branch=master)](https://coveralls.io/github/nolanlawson/promise-worker?branch=master)
 ====
 
 
