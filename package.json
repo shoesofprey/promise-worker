@@ -8,9 +8,6 @@
     "build": "rimraf dist && mkdirp dist && browserify -s PromiseWorker -p bundle-collapser/plugin . > dist/promise-worker.js && browserify -s registerPromiseWorker -p bundle-collapser/plugin register.js > dist/promise-worker.register.js && uglifyjs -mc < dist/promise-worker.js > dist/promise-worker.min.js && uglifyjs -mc < dist/promise-worker.register.js > dist/promise-worker.register.min.js",
     "build-test": "node bin/build-worker-bundles.js",
     "test": "npm run build-test && mocha test/test.js",
-    "test-local": "npm run build-test && zuul --local 9000 --no-coverage test/test.js",
-    "test-phantom": "npm run build-test && zuul --phantom --no-coverage test/test.js",
-    "test-browser": "npm run build-test && zuul --no-coverage ./test/test.js",
     "lint": "jshint -c .jshintrc *.js",
     "istanbul-combine": "istanbul-combine -d coverage -r json coverage/coverage.json coverage/coverage-worker.json && mv coverage/coverage-final.json coverage/coverage.json && rimraf coverage/coverage-worker.json",
     "istanbul-check": "istanbul check-coverage --lines 100 --function 100 --statements 100 --branches 100",
@@ -53,9 +50,7 @@
     "rimraf": "^2.5.3",
     "run-scripts": "^0.4.0",
     "stream-to-promise": "^1.1.0",
-    "uglify-js": "^2.7.0",
-    "zuul": "^3.10.1",
-    "zuul-localtunnel": "nolanlawson/zuul-localtunnel#https"
+    "uglify-js": "^2.7.0"
   },
   "dependencies": {
     "is-promise": "^2.1.0",
