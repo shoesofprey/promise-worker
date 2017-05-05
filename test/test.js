@@ -2,6 +2,7 @@
 
 if (!process.browser) {
   global.Worker = require('pseudo-worker');
+  global.RealWorker = require('workerjs'); // This is used in tests where we want a forked child.
   global.XMLHttpRequest = require('./xhr-shim');
 }
 
@@ -125,6 +126,19 @@ describe('main test suite', function () {
       assert.equal(err.message, 'oh noes');
     });
   });
+
+  it('handles asynchronous worker errors outside the promise chain', function (done) {
+    var worker = new RealWorker(path + 'worker-error-async-out-of-chain.js');
+    var promiseWorker = new PromiseWorker(worker);
+
+    promiseWorker.onWorkerError = function (error) {
+      done()
+    };
+    promiseWorker.postMessage().then(function () {
+      console.log("This shouldn't happen");
+      done(Error("Promise was allowed to run"));
+    })
+  })
 
   it('handles unregistered callbacks', function () {
     var worker = new Worker(path + 'worker-empty.js');
