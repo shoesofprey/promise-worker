@@ -41,6 +41,8 @@ function onError(self, e) {
   // The worker has had an error that our register didn't catch (so it probably happened outside
   // the promise chain). In any case, we need to reject all in flight promises.
   for (var messageId in self._callbacks) {
+    // Ignoring else because can't test this without workerjs implementing addEventListener
+    // correctly.
     /* istanbul ignore else */
     if (self._callbacks.hasOwnProperty(messageId)) {
       var callback = self._callbacks[messageId];
