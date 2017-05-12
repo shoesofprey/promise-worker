@@ -4,7 +4,7 @@ var register = require('../register');
 var Promise = require('lie');
 
 register(function () {
-  setTimeout(() => {
+  setTimeout(function () {
     throw Error("Worker crashed outside the request / response promise chain");
   }, 0);
 
