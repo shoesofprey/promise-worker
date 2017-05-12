@@ -155,6 +155,21 @@ describe('main test suite', function () {
 
   })
 
+  it('handles onWorkerError being called without being set', function () {
+    var worker = new RealWorker(path + 'worker-error-async-out-of-chain.js');
+    var promiseWorker = new PromiseWorker(worker);
+
+    return new Promise(function (resolve, reject) {
+      promiseWorker.postMessage().then(function () {
+        console.log("This shouldn't happen");
+        reject(Error("Promise was allowed to run"));
+      }).catch(function (err) {
+        resolve()
+      })
+    })
+
+  })
+
   it('handles unregistered callbacks', function () {
     var worker = new Worker(path + 'worker-empty.js');
     var promiseWorker = new PromiseWorker(worker);
