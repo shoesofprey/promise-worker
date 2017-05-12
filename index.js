@@ -37,7 +37,7 @@ function onMessage(self, e) {
 
 function onError(self, e) {
   var error = Error("General worker error: " + e.message +
-          " (" + e.filename + ":" + e.lineno + ")")
+          " (" + e.filename + ":" + e.lineno + ")");
   // The worker has had an error that our register didn't catch (so it probably happened outside
   // the promise chain). In any case, we need to reject all in flight promises.
   for (var messageId in self._callbacks) {
@@ -94,6 +94,6 @@ PromiseWorker.prototype.postMessage = function (userMessage) {
   });
 };
 
-PromiseWorker.prototype.onWorkerError = function(error) {/* Noop for others to implement. */}
+PromiseWorker.prototype.onWorkerError = function() {/* Noop for others to implement. */};
 
 module.exports = PromiseWorker;
