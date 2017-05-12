@@ -78,19 +78,7 @@ PromiseWorker.prototype.postMessage = function (userMessage) {
       resolve(result);
     };
     var jsonMessage = JSON.stringify(messageToSend);
-    /* istanbul ignore if */
-    if (typeof self._worker.controller !== 'undefined') {
-      // service worker, use MessageChannels because e.source is broken in Chrome < 51:
-      // https://bugs.chromium.org/p/chromium/issues/detail?id=543198
-      var channel = new MessageChannel();
-      channel.port1.onmessage = function (e) {
-        onMessage(self, e);
-      };
-      self._worker.controller.postMessage(jsonMessage, [channel.port2]);
-    } else {
-      // web worker
-      self._worker.postMessage(jsonMessage);
-    }
+    self._worker.postMessage(jsonMessage);
   });
 };
 
