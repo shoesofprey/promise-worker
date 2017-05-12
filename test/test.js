@@ -2,7 +2,7 @@
 
 if (!process.browser) {
   global.Worker = require('pseudo-worker');
-  global.RealWorker = require('workerjs'); // This is used in tests where we want a forked child.
+  global.RealWorker = require('workerjs-node'); // This is used in tests where we want a forked child.
   global.XMLHttpRequest = require('./xhr-shim');
 }
 
