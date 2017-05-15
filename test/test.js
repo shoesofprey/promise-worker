@@ -2,6 +2,7 @@
 
 if (!process.browser) {
   global.Worker = require('pseudo-worker');
+  global.RealWorker = require('workerjs-node'); // This is used in tests where we want a forked child.
   global.XMLHttpRequest = require('./xhr-shim');
 }
 
@@ -125,6 +126,49 @@ describe('main test suite', function () {
       assert.equal(err.message, 'oh noes');
     });
   });
+
+  it('handles asynchronous worker errors outside the promise chain', function () {
+    var worker = new RealWorker(path + 'worker-error-async-out-of-chain.js');
+    var promiseWorker = new PromiseWorker(worker);
+
+    return new Promise(function (resolve, reject) {
+      // We're going to make sure we get 2 errors back. The first, by rejecting our in-progress
+      // promise. The other by setting an onWorkerError function that should also be called with
+      // the same error.
+      var errorCount = 0;
+      promiseWorker.onWorkerError = function (error) {
+        errorCount++;
+        if (errorCount == 2) {
+          resolve()
+        }
+      };
+      promiseWorker.postMessage().then(function () {
+        console.log("This shouldn't happen");
+        reject(Error("Promise was allowed to run"));
+      }).catch(function (err) {
+        errorCount++;
+        if (errorCount == 2) {
+          resolve()
+        }
+      })
+    })
+
+  })
+
+  it('handles onWorkerError being called without being set', function () {
+    var worker = new RealWorker(path + 'worker-error-async-out-of-chain.js');
+    var promiseWorker = new PromiseWorker(worker);
+
+    return new Promise(function (resolve, reject) {
+      promiseWorker.postMessage().then(function () {
+        console.log("This shouldn't happen");
+        reject(Error("Promise was allowed to run"));
+      }).catch(function (err) {
+        resolve()
+      })
+    })
+
+  })
 
   it('handles unregistered callbacks', function () {
     var worker = new Worker(path + 'worker-empty.js');
